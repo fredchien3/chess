@@ -11,15 +11,15 @@ class Board
         (0..7).each do |row|
             (0..7).each do |col|
                 if row == 0 || row == 7 
-                    @board[row][col] = Piece.new(:rook) if col == 0 || col == 7
-                    @board[row][col] = Piece.new(:knight) if col == 1 || col == 6
-                    @board[row][col] = Piece.new(:bishop) if col == 2 || col == 5
-                    @board[row][col] = Piece.new(:king) if col == 3
-                    @board[row][col] = Piece.new(:queen) if col == 4
+                    @board[row][col] = Piece.new(:rook, [row, col]) if col == 0 || col == 7
+                    @board[row][col] = Piece.new(:knight, [row, col]) if col == 1 || col == 6
+                    @board[row][col] = Piece.new(:bishop, [row, col]) if col == 2 || col == 5
+                    @board[row][col] = Piece.new(:king, [row, col]) if col == 3
+                    @board[row][col] = Piece.new(:queen, [row, col]) if col == 4
                 elsif row == 1 || row == 6
-                    @board[row][col] = Piece.new(:pawn)
+                    @board[row][col] = Piece.new(:pawn, [row, col])
                 else
-                    @board[row][col] = Piece.new
+                    @board[row][col] = Piece.new(nil, [row, col])
                 end
             end
         end

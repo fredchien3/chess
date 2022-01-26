@@ -1,26 +1,15 @@
+require_relative 'movement.rb'
+
 class Piece
-    def initialize(type=nil)
-        @type = type
-        case type
-        when nil
-            @symbol = :_
-        when :king
-            @symbol = :K
-        when :queen
-            @symbol = :Q
-        when :rook
-            @symbol = :R
-        when :knight
-            @symbol = :H
-        when :bishop
-            @symbol = :B
-        when :pawn
-            @symbol = :P
-        end
+    attr_reader :type, :current_pos
+
+    def initialize(color, board, current_pos)
+        @color = color
+        @board = board
+        @current_pos = current_pos
     end
 
-    def inspect
-        @symbol.inspect
-    end
-
+    # def inspect
+    #     @symbol.inspect
+    # end
 end
