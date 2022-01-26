@@ -43,6 +43,45 @@ module Slideable
 end
 
 module Stepable
-    def moves()
+    KNIGHT_MOVES = [
+        [-2, -1],
+        [-2,  1],
+        [-1, -2],
+        [-1,  2],
+        [ 1, -2],
+        [ 1,  2],
+        [ 2, -1],
+        [ 2,  1]
+      ]
+      
+    KING_MOVES = [
+        [-1, -1],
+        [-1,  0],
+        [-1,  1],
+        [ 0, -1],
+        [ 0,  1],
+        [ 1, -1],
+        [ 1,  0],
+        [ 1,  1]
+      ]
+    
+    def moves(type)
+        moves = Set.new
+        row, col = @current_pos
+
+        case type
+        when :knight
+            KNIGHT_MOVES.each do |dy, dx|
+                move = [row + dy, col + dx]
+                moves << move if move.all? { |coord| coord.between?(0,7) }
+            end
+        when :king
+            KING_MOVES.each do |dy, dx|
+                move = [row + dy, col + dx]
+                moves << move if move.all? { |coord| coord.between?(0,7) }
+            end
+        end
+        moves
     end
+
 end
