@@ -2,9 +2,9 @@ require_relative 'piece.rb'
 require 'singleton'
 
 class Nullpiece < Piece
-    # include Singleton
+    include Singleton
     attr_reader :color, :symbol
     def initialize
-        @symbol = :_
+        @symbol = " "
     end
 end

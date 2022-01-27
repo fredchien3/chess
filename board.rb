@@ -6,8 +6,10 @@ require_relative 'stepping_piece.rb'
 require 'colorize'
 
 class Board
+    attr_reader :board
+
     def initialize
-        @board = Array.new(8) { Array.new(8) }
+        @board = Array.new(8) { Array.new(8) {Nullpiece.instance} }
         self.populate!
     end
 
@@ -30,13 +32,10 @@ class Board
                     @board[row][col] = Bishop.new(:white, @board, [row, col]) if col == 2 || col == 5
                     @board[row][col] = King.new(:white, @board, [row, col]) if col == 3
                     @board[row][col] = Queen.new(:white, @board, [row, col]) if col == 4
-                else
-                    @board[row][col] = Nullpiece.new
                 end
             end
         end
     end
-
 
     def [](pos)
         row, col = pos
@@ -51,11 +50,11 @@ class Board
     def move_piece(start_pos, end_pos)
         raise "There is no piece at start_pos!" if self[start_pos].is_a?(Nullpiece)
         raise "Invalid end_pos!" if !self.view_moves(start_pos).include? end_pos
-        raise "Can't move to pieces of the same color!" if self[start_pos].color == self[end_pos].color
+        raise "end_pos is occupied by a teammate!" if self[start_pos].color == self[end_pos].color
 
         self[end_pos] = self[start_pos]
         self[end_pos].pos = end_pos
-        self[start_pos] = Nullpiece.new
+        self[start_pos] = Nullpiece.instance
         true
     end
 
