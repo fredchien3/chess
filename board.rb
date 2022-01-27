@@ -1,9 +1,4 @@
-require_relative 'nullpiece.rb'
-require_relative 'pawn.rb'
-require_relative 'sliding_piece.rb'
-require_relative 'stepping_piece.rb'
-
-require 'colorize'
+require_relative 'piece.rb'
 
 class Board
     attr_reader :board, :white_king, :black_king
@@ -86,13 +81,12 @@ class Board
 
     def move_piece(start_pos, end_pos)
         raise "There is no piece at start_pos!" if self[start_pos].is_a?(Nullpiece)
-        raise "Invalid end_pos!" if !self.view_moves(start_pos).include? end_pos
-        raise "end_pos is occupied by a teammate!" if self[start_pos].color == self[end_pos].color
+        raise "end_pos not movable!" if !self.view_moves(start_pos).include? end_pos
+        raise "This move would leave you in check!" if !self.view_valid_moves(start_pos).include? end_pos
+        # raise "end_pos is occupied by a teammate!" if self[start_pos].color == self[end_pos].color
 
-        # for undo functionality
-        @trash = self[end_pos]
-        @pos_1, @pos_2 = start_pos, end_pos
-        # 
+        @trash = self[end_pos] # for undo functionality
+        @pos_1, @pos_2 = start_pos, end_pos 
 
         self[end_pos] = self[start_pos]
         self[end_pos].pos = end_pos
@@ -118,6 +112,11 @@ class Board
         piece.simple_moves
     end
 
+    def view_valid_moves(pos)
+        piece = self[pos]
+        piece.simple_moves
+    end
+
     def in_check?(color)
         if color == :white
             king_pos = @white_king.current_pos
@@ -139,11 +138,11 @@ class Board
         false
     end
 
-    def self.dupe(instance)
+    def dupe
         duped_instance = Board.new(false)
         (0..7).each do |row|
             duped_row = Array.new
-            instance.board[row].each do |piece|
+            self.board[row].each do |piece|
                 if piece.is_a?(Nullpiece)
                     duped_row << Nullpiece.instance
                 else

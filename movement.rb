@@ -1,7 +1,6 @@
-require 'byebug'
+# require 'byebug'
 
 module Slideable
-
     DIAGONAL_DIRS = [
         [-1, -1],    # up_left
         [-1, +1],    # up_right
