@@ -18,12 +18,23 @@ class Piece
         @current_pos = pos
     end
 
-    def valid_moves
-        moves = moves(@type)
-        moves.reject! do |pos|
-            row, col = pos
-            @board[row][col].color == self.color
+    def simple_moves # doesn't check for moving into check
+        array = moves(@type)
+        array.reject! do |pos|
+            @board[pos].color == self.color
         end
-        moves
+        array
     end
+
+    def valid_moves # certified hood classic
+        array = self.simple_moves.reject! { |end_pos| self.move_into_check?(end_pos) }
+        array ? array : []
+    end
+
+    def move_into_check?(end_pos)
+        duped_board = Board.dupe(@board)
+        duped_board.move_piece!(@current_pos, end_pos)
+        duped_board.in_check?(self.color)
+    end
+
 end

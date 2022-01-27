@@ -2,15 +2,16 @@ require_relative 'piece.rb'
 
 class Knight < Piece
     include Stepable
+
     def initialize(color, board, current_pos)
         super(color, board, current_pos)
         @type = :knight
         @symbol = :H # horsey
     end
     
-    # def move_diffs
-    #     moves(:knight)
-    # end
+    def dupe(dup_board)
+        Knight.new(@color, dup_board, @current_pos)
+    end
 end
 
 class King < Piece
@@ -21,7 +22,7 @@ class King < Piece
         @symbol = :K
     end
 
-    # def move_diffs
-    #     moves(:king)
-    # end
+    def dupe(dup_board)
+        King.new(@color, dup_board, @current_pos)
+    end
 end

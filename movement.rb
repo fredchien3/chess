@@ -48,11 +48,11 @@ module Slideable
         crow, ccol = current_pos
         nrow, ncol = crow+dy, ccol+dx
         next_pos = [nrow, ncol]
-
-        return if next_pos.any? { |coord| !coord.between?(0, 7) }   # out of bounds
-        return if @board[nrow][ncol].color == self.color  # teammate
         
-        if @board[nrow][ncol].color && @board[nrow][ncol].color != self.color # enemy
+        return if next_pos.any? { |coord| !coord.between?(0, 7) }   # out of bounds
+        return if @board[next_pos].color == self.color  # teammate
+        
+        if @board[next_pos].color && @board[next_pos].color != self.color # enemy
             return [next_pos]
         end
 
@@ -107,6 +107,7 @@ module Stepable
         case type
         when :knight
             KNIGHT_MOVES.each do |dy, dx|
+                
                 move = [row + dy, col + dx]
                 moves << move if move.all? { |coord| coord.between?(0,7) }
             end
@@ -119,4 +120,52 @@ module Stepable
         moves
     end
 
+end
+
+module Pawnable
+    def moves(type)
+        moves = self.forward_steps + self.side_attacks
+        moves.reject! do |pos|
+            @board[pos].color == self.color
+        end
+        moves
+    end
+
+
+    def forward_dir
+        @color == :white ? (return -1) : (return 1)
+    end
+
+    def forward_steps
+        steps = Array.new
+        row, col = @current_pos
+
+        if self.at_start_row?
+            dy = self.forward_dir
+            steps << [row + dy, col]
+            steps << [row + (dy*2), col]
+        else
+            dy = self.forward_dir
+            steps << [row + dy, col]
+        end
+        steps
+    end
+
+    def side_attacks
+        attacks = Array.new
+
+        row, col = @current_pos
+        dy = self.forward_dir
+        ld_pos = [row + dy, col - 1]
+        rd_pos = [row + dy, col + 1]
+        
+        left_diag = @board[ld_pos]
+        right_diag = @board[rd_pos]
+
+
+        attacks << [row + dy, col - 1] if left_diag && !left_diag.is_a?(Nullpiece) && left_diag.color != self.color
+        attacks << [row + dy, col + 1] if right_diag && !right_diag.is_a?(Nullpiece) && right_diag.color != self.color
+
+        attacks
+    end
 end
