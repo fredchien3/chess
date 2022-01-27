@@ -6,6 +6,7 @@ class Display
     def initialize(board)
         @board = board
         @cursor = Cursor.new([0,0], board)
+        true
     end
 
     def render
@@ -21,8 +22,12 @@ class Display
                 if pos == @cursor.cursor_pos
                     @cursor.selected ? argument = {:color => :white, :background => :red} : argument = {:color => :white, :background => :green}
                 end
-
-                print (@board[pos].symbol.to_s + " ").colorize(argument)
+                
+                if @board[pos].symbol == :_
+                    print "  ".colorize(argument)
+                else
+                    print (@board[pos].symbol.to_s + " ").colorize(argument)
+                end
 
             end
             puts

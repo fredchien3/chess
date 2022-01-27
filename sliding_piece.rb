@@ -9,7 +9,7 @@ class Bishop < Piece
     end
 
     def move_dirs
-        moves(:diag)
+        moves(:bishop)
     end
 end
 
@@ -22,7 +22,7 @@ class Rook < Piece
     end
 
     def move_dirs
-        moves(:straight)
+        moves(:rook)
     end
 end
 
@@ -35,6 +35,6 @@ class Queen < Piece
     end
 
     def move_dirs
-        moves(:both)
+        moves(:queen)
     end
 end

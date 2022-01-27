@@ -17,4 +17,13 @@ class Piece
     def pos=(pos)
         @current_pos = pos
     end
+
+    def valid_moves
+        moves = moves(@type)
+        moves.reject! do |pos|
+            row, col = pos
+            @board[row][col].color == self.color
+        end
+        moves
+    end
 end

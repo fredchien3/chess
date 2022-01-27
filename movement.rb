@@ -1,43 +1,78 @@
+require 'byebug'
+
 module Slideable
+
+    DIAGONAL_DIRS = [
+        [-1, -1],    # up_left
+        [-1, +1],    # up_right
+        [+1, -1],    # down_left
+        [+1, +1]    # down_right
+        ]
+
+    HORIZONTAL_DIRS = [
+        [-1, 0],     # up
+        [1, 0],      # down
+        [0, -1],     # left
+        [0, 1]      # right
+        ]
 
     def moves(directions) # straight, diag, both
         case directions
-        when :diag
+        when :bishop
             moves = self.diagonal_directions
-        when :straight
+        when :rook
             moves = self.horizontal_directions
-        when :both
+        when :queen
             moves = self.diagonal_directions + self.horizontal_directions
         end
         moves
     end
 
     def diagonal_directions
-        row, col = @current_pos
-        diagonals = Set.new
-        (0..7).each do |n|
-            pairs = [[row - n, col - n],
-            [row - n, col + n],
-            [row + n, col - n],
-            [row + n, col + n]]
+        diagonals = Array.new
             
-            pairs.each do |pair|
-                diagonals << pair if pair.all? { |coord| coord.between?(0,7) }
-            end
+        DIAGONAL_DIRS.each do |direction|
+            array = explore_direction(@current_pos, direction) 
+            diagonals += array if array
         end
-        diagonals.delete(@current_pos)
+
+        diagonals
+    end
+
+    def explore_direction(current_pos, direction)
+        # recursively adds moves to the direction
+        # unless OOB, teammate, or beyond enemy.
+        directional_moves = Array.new
+        dy, dx = direction
+
+        crow, ccol = current_pos
+        nrow, ncol = crow+dy, ccol+dx
+        next_pos = [nrow, ncol]
+
+        return if next_pos.any? { |coord| !coord.between?(0, 7) }   # out of bounds
+        return if @board[nrow][ncol].color == self.color  # teammate
+        
+        if @board[nrow][ncol].color && @board[nrow][ncol].color != self.color # enemy
+            return [next_pos]
+        end
+
+        directional_moves << next_pos
+
+        recursive = explore_direction(next_pos, direction)
+        directional_moves += recursive if recursive
+        directional_moves
     end
 
     def horizontal_directions
         row, col = @current_pos
-        horizontals = Set.new
-        (0..7).each do |nrow|
-            (0..7).each do |ncol|
-                horizontals << [nrow, ncol] if nrow == row
-                horizontals << [nrow, ncol] if ncol == col
-            end
+        horizontals = Array.new
+
+        HORIZONTAL_DIRS.each do |direction|
+            array = explore_direction(@current_pos, direction) 
+            horizontals += array if array
         end
-        horizontals.delete(@current_pos)
+        
+        horizontals
     end
 
 end
@@ -66,7 +101,7 @@ module Stepable
       ]
     
     def moves(type)
-        moves = Set.new
+        moves = Array.new
         row, col = @current_pos
 
         case type

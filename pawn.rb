@@ -1,4 +1,5 @@
 require_relative 'piece.rb'
+require 'byebug'
 
 class Pawn < Piece
     def initialize(color, board, current_pos)
@@ -7,8 +8,13 @@ class Pawn < Piece
         @symbol = :P
     end
     
-    def moves
-        self.forward_steps + self.side_attacks
+    def valid_moves
+        moves = self.forward_steps + self.side_attacks
+        moves.reject! do |pos|
+            row, col = pos
+            @board[row][col].color == self.color
+        end
+        moves
     end
 
     def at_start_row?
@@ -44,9 +50,11 @@ class Pawn < Piece
         left_diag = @board[row + dy][col - 1]
         right_diag = @board[row + dy][col + 1]
 
-        attacks << [row + dy, col - 1] if left_diag.color != self.color && !left_diag.is_a?(Nullpiece)
-        attacks << [row + dy, col + 1] if right_diag.color != self.color && !right_diag.is_a?(Nullpiece)
+
+        attacks << [row + dy, col - 1] if left_diag && !left_diag.is_a?(Nullpiece) && left_diag.color != self.color
+        attacks << [row + dy, col + 1] if right_diag && !right_diag.is_a?(Nullpiece) && right_diag.color != self.color
 
         attacks
     end
+
 end

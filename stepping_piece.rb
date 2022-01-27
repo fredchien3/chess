@@ -8,9 +8,9 @@ class Knight < Piece
         @symbol = :H # horsey
     end
     
-    def move_diffs
-        moves(:knight)
-    end
+    # def move_diffs
+    #     moves(:knight)
+    # end
 end
 
 class King < Piece
@@ -21,7 +21,7 @@ class King < Piece
         @symbol = :K
     end
 
-    def move_diffs
-        moves(:king)
-    end
+    # def move_diffs
+    #     moves(:king)
+    # end
 end
