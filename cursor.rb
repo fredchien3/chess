@@ -39,7 +39,8 @@ class Cursor
         @selected = false
     end
 
-    def get_input
+    def get_input(current_color)
+        @current_color = current_color
         key = KEYMAP[read_char]
         handle_key(key)
     end
@@ -78,8 +79,7 @@ class Cursor
     def handle_key(key)
         case key
         when :return, :space
-            self.toggle_selected
-            return @cursor_pos
+            return self.toggle_selected
         when :left, :right, :up, :down
             self.update_pos( MOVES[key] )
             return nil
@@ -96,7 +96,32 @@ class Cursor
     end
 
     def toggle_selected
-        @selected = !selected
+        if !@selected # trying to select a pos
+            if @board[@cursor_pos].is_a? Nullpiece
+                # can't select this piece!
+                raise "Can't select this pos!"
+            elsif @board[@cursor_pos].color != @current_color
+                raise "Can't select opponent piece!"
+            else
+                @selected = true
+                @selected_pos = @cursor_pos.dup
+            end
+        else # trying to move a selected piece to a new pos
+            if @selected_pos == @cursor_pos
+                @selected_pos = nil
+                @selected = false
+            elsif # valid move :))
+                @board.view_valid_moves(@selected_pos).include? @cursor_pos
+                @board.move_piece(@selected_pos, @cursor_pos)
+                @selected_pos = nil
+                @selected = false
+                return true
+            else
+                # can't move to this pos!
+                raise "Can't move to this pos!"
+            end
+        end
+        false
     end
 
 end

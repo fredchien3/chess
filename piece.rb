@@ -33,7 +33,7 @@ class Piece
     end
 
     def move_into_check?(end_pos)
-        duped_board = Board.dupe(@board)
+        duped_board = @board.dupe
         duped_board.move_piece!(@current_pos, end_pos)
         duped_board.in_check?(self.color)
     end
@@ -44,7 +44,7 @@ class Bishop < Piece
     def initialize(color, board, current_pos)
         super(color, board, current_pos)
         @type = :bishop
-        @symbol = :B
+        @color == :white ? @symbol = :♗ : @symbol = :♝
     end
 
     def move_dirs
@@ -61,7 +61,7 @@ class Rook < Piece
     def initialize(color, board, current_pos)
         super(color, board, current_pos)
         @type = :rook
-        @symbol = :R
+        @color == :white ? @symbol = :♖ : @symbol = :♜
     end
 
     def move_dirs
@@ -78,7 +78,7 @@ class Queen < Piece
     def initialize(color, board, current_pos)
         super(color, board, current_pos)
         @type = :queen
-        @symbol = :Q
+        @color == :white ? @symbol = :♕ : @symbol = :♛
     end
 
     def move_dirs
@@ -96,7 +96,7 @@ class Knight < Piece
     def initialize(color, board, current_pos)
         super(color, board, current_pos)
         @type = :knight
-        @symbol = :H # horsey
+        @color == :white ? @symbol = :♘ : @symbol = :♞
     end
     
     def dupe(dup_board)
@@ -109,7 +109,7 @@ class King < Piece
     def initialize(color, board, current_pos)
         super(color, board, current_pos)
         @type = :king
-        @symbol = :K
+        @color == :white ? @symbol = :♔ : @symbol = :♚
     end
 
     def dupe(dup_board)
@@ -123,7 +123,7 @@ class Pawn < Piece
     def initialize(color, board, current_pos)
         super(color, board, current_pos)
         @type = :pawn
-        @symbol = :P
+        @color == :white ? @symbol = :♙ : @symbol = :♟︎
     end
 
     def at_start_row?

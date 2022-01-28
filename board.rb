@@ -154,5 +154,10 @@ class Board
         duped_instance.track_pieces
         duped_instance
     end
+
+    def over?
+        self.checkmate?(:white) || self.checkmate?(:black)
+    end
+    
 end
 

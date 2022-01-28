@@ -3,13 +3,15 @@ require_relative 'cursor.rb'
 require 'colorize'
 
 class Display
+    attr_accessor :cursor
+
     def initialize(board)
         @board = board
         @cursor = Cursor.new([0,0], board)
         true
     end
 
-    def render
+    def render(current_player=nil)
         system('clear')
         self.print_top_line
         
@@ -18,9 +20,14 @@ class Display
             (0..7).each do |col|
                 pos = row, col
 
-                argument = {:color => :black, :background => :white} if row.even? && col.even? || row.odd? && col.odd?
+                if row.even? && col.even? || row.odd? && col.odd?
+                    argument = {:color => :white, :background => :light_black}
+                else
+                    argument = {:color => :white, :background => :dark_white}
+                end
+
                 if pos == @cursor.cursor_pos
-                    @cursor.selected ? argument = {:color => :white, :background => :red} : argument = {:color => :white, :background => :green}
+                    @cursor.selected ? argument = {:color => :black, :background => :red} : argument = {:color => :white, :background => :green}
                 end
                 
                 if @board[pos].symbol == :_
@@ -31,6 +38,15 @@ class Display
 
             end
             puts
+        end
+        if current_player
+            puts "Current player: #{current_player.name}"         
+            current_player.color == :white ? (print "Pieces: Transparent | Side: Bottom") : (print "Pieces: Solid | Side: Top")
+            puts
+            puts "Press arrow keys or WASD to move cursor"
+            puts "Press space or enter to select, ctrl + c to quit"
+        else
+            puts "Welcome!"
         end
     end
 
@@ -43,11 +59,11 @@ class Display
         puts
     end
 
-    def loopy
-        50.times do
-            self.render
-            @cursor.get_input
-        end
-    end
+    # def loopy
+    #     50.times do
+    #         self.render
+    #         @cursor.get_input
+    #     end
+    # end
 
 end
